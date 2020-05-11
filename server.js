@@ -82,7 +82,7 @@ server.delete("/api/posts/:id", (req, res) => {
 
 server.post("/api/posts", (req, res) => {
   const newPost = req.body;
-  add(newPost)
+  insert(newPost)
     .then((posts) => {
       res.status(201).json(posts);
     })
@@ -97,6 +97,15 @@ server.put("/api/posts/:id", (req, res) => {
   // Update a post by id
   const { id } = req.params;
   const replacementPost = req.body;
+  update(id, replacementPost)
+    .then((posts) => {
+      res.status(205).json(posts);
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: error.message,
+      });
+    });
 });
 
 // Listen on the port
