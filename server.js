@@ -65,6 +65,13 @@ server.get("/api/posts/:id", (req, res) => {
 server.delete("/api/posts/:id", (req, res) => {
   // Delete a post by id
   const { id } = req.params;
+  remove(id)
+    .then((posts) => {
+      res.status(202).json(`The post is successfully removed`);
+    })
+    .catch((error) => {
+      res.status(500).json({ message: error.message, stack: error.stack });
+    });
 });
 
 server.post("/api/posts", (req, res) => {
