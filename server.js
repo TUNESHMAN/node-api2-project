@@ -11,10 +11,32 @@ server.use(express.json());
 // I enabled CORS so that the server works for all origins
 server.use(cors());
 
+// I wrote my dummy endpoint
 server.get("/", (req, res) => {
-  res.send("Hello from server");
+  res.json("Hello from server");
 });
 
+server.get("/api/posts", (req,res)=>{
+    // Get all posts, no extra info such as id is needed
+
+
+})
+
+server.get("/api/posts/:id", (req,res)=>{
+    // Get a post by its id
+})
+
+
+server.delete("/api/posts/:id", (req,res)=>{
+// Delete a post by id
+})
+
+server.put("/api/posts/:id", (req,res)=>{
+    // Update a post by id
+})
+
+
+// Listen on the port
 server.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
 });
