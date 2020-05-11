@@ -67,7 +67,11 @@ server.delete("/api/posts/:id", (req, res) => {
   const { id } = req.params;
   remove(id)
     .then((posts) => {
-      res.status(202).json(`The post is successfully removed`);
+      if (posts) {
+        res.status(202).json(`The post is successfully removed`);
+      } else {
+        res.status(404).json(`The post does not exist in the database`);
+      }
     })
     .catch((error) => {
       res.status(500).json({ message: error.message, stack: error.stack });
