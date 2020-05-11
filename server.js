@@ -70,7 +70,9 @@ server.delete("/api/posts/:id", (req, res) => {
       if (posts) {
         res.status(202).json(`The post is successfully removed`);
       } else {
-        res.status(404).json(`The post does not exist in the database`);
+        res
+          .status(404)
+          .json({ message: `The post does not exist in the database` });
       }
     })
     .catch((error) => {
