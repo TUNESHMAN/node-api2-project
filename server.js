@@ -22,7 +22,7 @@ server.use(express.json());
 server.use(cors());
 
 // I wrote my dummy endpoint
-server.get("/", (req, res) => {
+server.get("/api", (req, res) => {
   res.json("Hello from server");
 });
 
@@ -33,13 +33,33 @@ server.get("/api/posts", (req, res) => {
       res.status(200).json(posts);
     })
     .catch((error) => {
-      res.status(500).json(error);
+      res.status(500).json({
+        message: error.message,
+        stack: error.stack,
+      });
     });
 });
 
 server.get("/api/posts/:id", (req, res) => {
   // Get a post by its id which is a parameter of the path
   const { id } = req.params;
+  findById(id)
+    .then((posts) => {
+      // Two things can happen,
+      // ID exists? We res.json the data
+      // ID does not exist? We res.json 404
+      if (posts) {
+        res.status(200).json(posts);
+      } else {
+        res.status(404).json({ message: "the post could not be found" });
+      }
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: error.message,
+        stack: error.stack,
+      });
+    });
 });
 
 server.delete("/api/posts/:id", (req, res) => {
