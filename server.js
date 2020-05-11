@@ -69,6 +69,15 @@ server.delete("/api/posts/:id", (req, res) => {
 
 server.post("/api/posts", (req, res) => {
   const newPost = req.body;
+  add(newPost)
+    .then((posts) => {
+      res.status(201).json(posts);
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: error.message,
+      });
+    });
 });
 
 server.put("/api/posts/:id", (req, res) => {
