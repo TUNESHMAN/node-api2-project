@@ -115,33 +115,65 @@ server.put("/api/posts/:id", (req, res) => {
 });
 
 server.post("/api/posts/:id/comments", (req, res) => {
-  const { comments } = req.params;
+  const { id } = req.params;
+  console.log(id);
   const newComment = req.body;
-  insertComment(comments, newComment)
-    .then((comment) => {
-      res.status(201).json(comment);
+  newComment.post_id = id;
+
+  findById(id)
+    .then((post) => {
+      console.log(post);
+      if (post.length > 0) {
+        if (newComment.text) {
+          insertComment(newComment)
+            .then((comment) => {
+              res.status(201).json({ message: `Comment added to post` });
+            })
+            .catch((error) => {
+              console.log(error);
+              res.status(500).json({ message: `comment could not be added` });
+            });
+        } else {
+          res
+            .status(400)
+            .json({ message: `Please provide text for the comment.` });
+        }
+      } else {
+        res
+          .status(404)
+          .json({ message: `The post with the specified ID does not exist.` });
+      }
     })
-    .catch((error) => {
-      res.status(500).json({
-        message: error.message,
-      });
+    .catch((err) => {
+      res.status(500).json({ message: `Unsuccessful attempt at finding post` });
     });
 });
 
 server.get("/api/posts/:id/comments", (req, res) => {
-  const { id, comments } = req.params;
-  findPostComments(id, comments)
-    .then((comment) => {
-      if (comment) {
-        res.status(200).json(comment);
+  const { id } = req.params;
+  findById(id)
+    .then((post) => {
+      console.log(id);
+      if (post.length > 0) {
+        findPostComments(id)
+          .then((comment) => {
+            console.log(comment);
+
+            res.status(200).json(comment);
+          })
+          .catch((error) => {
+            res.status(500).json({
+              message: `The comments information could not be retrieved.`,
+            });
+          });
       } else {
-        res.status(500).json({ message: `post does not exist` });
+        res
+          .status(500)
+          .json({ message: `The post with the specified ID does not exist.` });
       }
     })
     .catch((error) => {
-      res.status(500).json({
-        message: `Comment not found`,
-      });
+      res.status(404).json({ message: `Error fetching posts` });
     });
 });
 // Listen on the port
