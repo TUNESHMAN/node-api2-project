@@ -12,7 +12,7 @@ const {
   insertComment,
 } = require("./data/db");
 
-const port = 5000;
+const port = process.env.PORT || 5000;
 // Flesh out a dummy server
 const server = express();
 // Plug extra functionality to the server
@@ -108,6 +108,36 @@ server.put("/api/posts/:id", (req, res) => {
     });
 });
 
+server.post("/api/posts/:id/comments", (req, res) => {
+  const { comments } = req.params;
+  const newComment = req.body;
+  insertComment(comments, newComment)
+    .then((comment) => {
+      res.status(201).json(comment);
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: error.message,
+      });
+    });
+});
+
+server.get("/api/posts/:id/comments", (req, res) => {
+  const { id, comments } = req.params;
+  findPostComments(id, comments)
+    .then((comment) => {
+      if (comment) {
+        res.status(200).json(comment);
+      } else {
+        res.status(500).json({ message: `post does not exist` });
+      }
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: `Comment not found`,
+      });
+    });
+});
 // Listen on the port
 server.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
